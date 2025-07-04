@@ -1,0 +1,18 @@
+@use '../utils' as *;
+
+.slider__area {
+  .swiper-pagination {
+    bottom: 110px !important;
+    /* sube los dots */
+  }
+}
+
+.swiper-pagination-bullet {
+  background-color: rgba($color: #000000, $alpha: 0.5);
+  opacity: 0.5;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1;
+  background-color: var(--tg-theme-primary) !important;
+}

@@ -1,0 +1,22 @@
+version: "3.3"
+services:
+  app:
+    container_name: dashboard
+    build:
+      context: . 
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env.production
+    tty: true
+    networks:
+      - front-end
+    volumes:
+      - ./.next:/usr/src/app/.next
+      - ./public:/usr/src/app/public
+
+networks:
+  front-end:
