@@ -8,7 +8,7 @@ interface BlogPageProps {
 }
 
 export const metadata = {
-  title: "Blog Details SkillGro - Online Courses & Education React Next js Template",
+  title: "Blog Details",
 };
 
 export default function BlogPage({ params }: BlogPageProps) {

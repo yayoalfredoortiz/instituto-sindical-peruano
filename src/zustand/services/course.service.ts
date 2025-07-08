@@ -10,8 +10,11 @@ export interface CourseListResponse {
 }
 
 export interface CourseFilters {
-  status?: number;
-  category_id?: number;
+  status?: number; 
+  search?: string;
+  categoryId?: string;
+  levelId?: string;
+  isPaid?: string;
 }
 
 export class CourseService {
@@ -25,6 +28,7 @@ export class CourseService {
           status: 3,
         },
       });
+      console.log('filters','-',filters,'-',data);
       return data;
     } catch (error) {
       console.error(error);

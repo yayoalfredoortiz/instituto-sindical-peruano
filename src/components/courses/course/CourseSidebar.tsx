@@ -1,112 +1,76 @@
-import { selectCourses } from "@/redux/features/courseSlice";
-import { useCourseCategoryStore } from "@/zustand/stores/course-category.store";
-import { useCourseLevelStore } from "@/zustand/stores/course-level.store";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+'use client';
+
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useCourseCategoryStore } from '@/zustand/stores/course-category.store';
+import { useCourseLevelStore } from '@/zustand/stores/course-level.store';
+import { useState } from 'react';
 import { Rating } from 'react-simple-star-rating';
 
-const CourseSidebar = ({ setCourses }: any) => {
+const CourseSidebar = () => {
+   const router = useRouter();
+   const pathname = usePathname();
+   const searchParams = useSearchParams();
 
    const [mostrarMásCategorías, setMostrarMásCategorías] = useState(false);
-   const [mostrarMásIdiomas, setMostrarMásIdiomas] = useState(false);
    const [mostrarMásInstructores, setMostrarMásInstructores] = useState(false);
 
-   const [categoríaSeleccionada, setCategoríaSeleccionada] = useState('');
-   const [idiomaSeleccionado, setIdiomaSeleccionado] = useState('');
-   const [precioSeleccionado, setPrecioSeleccionado] = useState('');
-   const [nivelSeleccionado, setNivelSeleccionado] = useState('');
-   const [instructorSeleccionado, setInstructorSeleccionado] = useState('');
-   const [valoraciónSeleccionada, setValoraciónSeleccionada] = useState<number | null>(null);
+   const categoryId = searchParams.get('categoryId') ?? '';
+   const levelId = searchParams.get('levelId') ?? '';
+   const isPaid = searchParams.get('isPaid') ?? '';
+   const rating = searchParams.get('rating') ?? '';
 
-   // ✅ Obtenemos las categorías desde Zustand
-   const categories = useCourseCategoryStore((state) => state.data);
-   const categorías = categories.map(cat => cat.name ?? 'Sin nombre');
-
-   // ✅ Obtenemos los niveles desde Zustand
-   const levels = useCourseLevelStore((state) => state.data);
-   const niveles = levels.map(level => level.name ?? 'Sin nombre');
-
-   const idiomas = useSelector(selectCourses).map(course => course.language);
-   const precios = useSelector(selectCourses).map(course => course.price_type);
-   const instructores = useSelector(selectCourses).map(course => course.instructors);
-
-   const todasLasCategorías = ['Todas las categorías', ...new Set(categorías)];
-   const todosLosIdiomas = ['Todos los idiomas', ...new Set(idiomas)];
-   // const todosLosPrecios = ['Todos los precios', ...new Set(precios)];
-   const todosLosNiveles = ['Todos los niveles', ...new Set(niveles)];
-   const todosLosInstructores = ['Todos los instructores', ...new Set(instructores)];
-
-   const todosLosCursos = useSelector(selectCourses);
-
-   const todosLosPrecios = ['Todos los precios', 'Gratuito', 'De pago'];
-
-   const filtrarCursos = ({ category, language, price, rating, skill, instructor }: any) => {
-      let cursosFiltrados = todosLosCursos;
-
-      if (category && category !== 'Todas las categorías') {
-         cursosFiltrados = cursosFiltrados.filter(course => course.category === category);
+   const setParam = (key: string, value: string | null) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) {
+         params.set(key, value);
+      } else {
+         params.delete(key);
       }
-
-      if (language && language !== 'Todos los idiomas') {
-         cursosFiltrados = cursosFiltrados.filter(course => course.language === language);
-      }
-
-      if (price && price !== 'Todos los precios') {
-         cursosFiltrados = cursosFiltrados.filter(course => course.price_type === price);
-      }
-
-      if (skill && skill !== 'Todos los niveles') {
-         cursosFiltrados = cursosFiltrados.filter(course => course.skill_level === skill);
-      }
-
-      if (instructor && instructor !== 'Todos los instructores') {
-         cursosFiltrados = cursosFiltrados.filter(course => course.instructors === instructor);
-      }
-
-      if (rating) {
-         cursosFiltrados = cursosFiltrados.filter(course => course.rating >= rating);
-      }
-
-      setCourses(cursosFiltrados);
+      router.push(`${pathname}?${params.toString()}`);
    };
 
-   const manejarCategoría = (cat: string) => {
-      setCategoríaSeleccionada(prev => prev === cat ? '' : cat);
-      filtrarCursos({ category: cat === categoríaSeleccionada ? '' : cat, language: idiomaSeleccionado, price: precioSeleccionado, rating: valoraciónSeleccionada, skill: nivelSeleccionado, instructor: instructorSeleccionado });
+   const manejarCategoría = (id: string) => {
+      const selected = categoryId === id ? null : id;
+      setParam('categoryId', selected);
    };
 
-   const manejarIdioma = (lang: string) => {
-      setIdiomaSeleccionado(prev => prev === lang ? '' : lang);
-      filtrarCursos({ category: categoríaSeleccionada, language: lang === idiomaSeleccionado ? '' : lang, price: precioSeleccionado, rating: valoraciónSeleccionada, skill: nivelSeleccionado, instructor: instructorSeleccionado });
+   const manejarNivel = (id: string) => {
+      const selected = levelId === id ? null : id;
+      setParam('levelId', selected);
    };
 
    const manejarPrecio = (precio: string) => {
-      setPrecioSeleccionado(prev => prev === precio ? '' : precio);
-      filtrarCursos({ category: categoríaSeleccionada, language: idiomaSeleccionado, price: precio === precioSeleccionado ? '' : precio, rating: valoraciónSeleccionada, skill: nivelSeleccionado, instructor: instructorSeleccionado });
+      let value: string | null = null;
+      if (precio === 'Gratuito') value = '0';
+      else if (precio === 'De pago') value = '1';
+      const selected = isPaid === value ? null : value;
+      setParam('isPaid', selected);
    };
 
-   const manejarNivel = (nivel: string) => {
-      setNivelSeleccionado(prev => prev === nivel ? '' : nivel);
-      filtrarCursos({ category: categoríaSeleccionada, language: idiomaSeleccionado, price: precioSeleccionado, skill: nivel === nivelSeleccionado ? '' : nivel, rating: valoraciónSeleccionada, instructor: instructorSeleccionado });
+   const manejarValoración = (valor: number) => {
+      const val = rating === valor.toString() ? null : valor.toString();
+      setParam('rating', val);
    };
 
-   const manejarInstructor = (instructor: string) => {
-      setInstructorSeleccionado(instructor);
-      filtrarCursos({ category: categoríaSeleccionada, language: idiomaSeleccionado, price: precioSeleccionado, rating: valoraciónSeleccionada, skill: nivelSeleccionado, instructor });
+   const resetFiltros = () => {
+      router.push(pathname);
    };
 
-   const manejarValoración = (rating: number) => {
-      setValoraciónSeleccionada(prev => prev === rating ? null : rating);
-      filtrarCursos({ category: categoríaSeleccionada, language: idiomaSeleccionado, price: precioSeleccionado, rating: rating === valoraciónSeleccionada ? null : rating, skill: nivelSeleccionado, instructor: instructorSeleccionado });
-   };
+   const categories = useCourseCategoryStore((state) => state.data);
+   const levels = useCourseLevelStore((state) => state.data);
 
-   const categoríasVisibles = mostrarMásCategorías ? todasLasCategorías : todasLasCategorías.slice(0, 8);
-   const idiomasVisibles = mostrarMásIdiomas ? todosLosIdiomas : todosLosIdiomas.slice(0, 4);
-   const instructoresVisibles = mostrarMásInstructores ? todosLosInstructores : todosLosInstructores.slice(0, 4);
+   const todosLosPrecios = ['Gratuito', 'De pago'];
+   const categoríasVisibles = mostrarMásCategorías ? categories : categories.slice(0, 8);
+   const nivelesVisibles = levels;
 
    return (
       <div className="col-xl-3 col-lg-4">
          <aside className="courses__sidebar">
+
+            {/* Botón limpiar filtros */}
+            <div className="mb-4 text-end">
+               <button onClick={resetFiltros} className="btn btn-sm btn-outline-dark">Limpiar filtros</button>
+            </div>
 
             {/* Categorías */}
             <div className="courses-widget">
@@ -114,126 +78,101 @@ const CourseSidebar = ({ setCourses }: any) => {
                <div className="courses-cat-list">
                   <ul className="list-wrap">
                      {categoríasVisibles.map((cat, i) => (
-                        <li key={i}>
-                           <div onClick={() => manejarCategoría(cat)} className="form-check">
-                              <input className="form-check-input" type="checkbox" checked={cat === categoríaSeleccionada} readOnly id={`cat_${i}`} />
-                              <label className="form-check-label" htmlFor={`cat_${i}`}>{cat}</label>
+                        <li key={cat.id}>
+                           <div onClick={() => manejarCategoría(String(cat.id))} className="form-check">
+                              <input
+                                 className="form-check-input"
+                                 type="checkbox"
+                                 checked={categoryId === String(cat.id)}
+                                 readOnly
+                                 id={`cat_${i}`}
+                              />
+                              <label className="form-check-label" htmlFor={`cat_${i}`}>{cat.name}</label>
                            </div>
                         </li>
                      ))}
                   </ul>
-                  <div className="show-more">
-                     <a className={`show-more-btn ${mostrarMásCategorías ? 'active' : ''}`} style={{ cursor: "pointer" }} onClick={() => setMostrarMásCategorías(!mostrarMásCategorías)}>
-                        {mostrarMásCategorías ? "Mostrar menos -" : "Mostrar más +"}
-                     </a>
-                  </div>
+                  {categories.length > 8 && (
+                     <div className="show-more">
+                        <a
+                           onClick={() => setMostrarMásCategorías(!mostrarMásCategorías)}
+                           className={`show-more-btn ${mostrarMásCategorías ? 'active' : ''}`}
+                           style={{ cursor: 'pointer' }}
+                        >
+                           {mostrarMásCategorías ? 'Mostrar menos -' : 'Mostrar más +'}
+                        </a>
+                     </div>
+                  )}
                </div>
             </div>
-
-            {/* Idiomas */}
-            {/* <div className="courses-widget">
-               <h4 className="widget-title">Idiomas</h4>
-               <div className="courses-cat-list">
-                  <ul className="list-wrap">
-                     {idiomasVisibles.map((lang, i) => (
-                        <li key={i}>
-                           <div onClick={() => manejarIdioma(lang)} className="form-check">
-                              <input className="form-check-input" type="checkbox" checked={lang === idiomaSeleccionado} readOnly id={`lang_${i}`} />
-                              <label className="form-check-label" htmlFor={`lang_${i}`}>{lang}</label>
-                           </div>
-                        </li>
-                     ))}
-                  </ul>
-                  <div className="show-more">
-                     <a className={`show-more-btn ${mostrarMásIdiomas ? 'active' : ''}`} style={{ cursor: "pointer" }} onClick={() => setMostrarMásIdiomas(!mostrarMásIdiomas)}>
-                        {mostrarMásIdiomas ? "Mostrar menos -" : "Mostrar más +"}
-                     </a>
-                  </div>
-               </div>
-            </div> */}
 
             {/* Precio */}
             <div className="courses-widget">
                <h4 className="widget-title">Precio</h4>
                <div className="courses-cat-list">
                   <ul className="list-wrap">
-                     {todosLosPrecios.map((precio, i) => (
-                        <li key={i}>
-                           <div onClick={() => manejarPrecio(precio)} className="form-check">
-                              <input
-                                 className="form-check-input"
-                                 type="checkbox"
-                                 checked={precio === precioSeleccionado}
-                                 readOnly
-                                 id={`price_${i}`}
-                              />
-                              <label className="form-check-label" htmlFor={`price_${i}`}>{precio}</label>
-                           </div>
-                        </li>
-                     ))}
-                     {/* {todosLosPrecios.map((precio, i) => (
-                        <li key={i}>
-                           <div onClick={() => manejarPrecio(precio)} className="form-check">
-                              <input className="form-check-input" type="checkbox" checked={precio === precioSeleccionado} readOnly id={`price_${i}`} />
-                              <label className="form-check-label" htmlFor={`price_${i}`}>{precio}</label>
-                           </div>
-                        </li>
-                     ))} */}
+                     {todosLosPrecios.map((precio, i) => {
+                        const valor = precio === 'Gratuito' ? '0' : '1';
+                        return (
+                           <li key={i}>
+                              <div onClick={() => manejarPrecio(precio)} className="form-check">
+                                 <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    checked={isPaid === valor}
+                                    readOnly
+                                    id={`price_${i}`}
+                                 />
+                                 <label className="form-check-label" htmlFor={`price_${i}`}>{precio}</label>
+                              </div>
+                           </li>
+                        );
+                     })}
                   </ul>
                </div>
             </div>
 
-            {/* Nivel de habilidad */}
+            {/* Nivel */}
             <div className="courses-widget">
                <h4 className="widget-title">Nivel</h4>
                <div className="courses-cat-list">
                   <ul className="list-wrap">
-                     {todosLosNiveles.map((nivel, i) => (
-                        <li key={i}>
-                           <div onClick={() => manejarNivel(nivel)} className="form-check">
-                              <input className="form-check-input" type="checkbox" checked={nivel === nivelSeleccionado} readOnly id={`skill_${i}`} />
-                              <label className="form-check-label" htmlFor={`skill_${i}`}>{nivel}</label>
+                     {nivelesVisibles.map((nivel, i) => (
+                        <li key={nivel.id}>
+                           <div onClick={() => manejarNivel(String(nivel.id))} className="form-check">
+                              <input
+                                 className="form-check-input"
+                                 type="checkbox"
+                                 checked={levelId === String(nivel.id)}
+                                 readOnly
+                                 id={`nivel_${i}`}
+                              />
+                              <label className="form-check-label" htmlFor={`nivel_${i}`}>{nivel.name}</label>
                            </div>
                         </li>
                      ))}
                   </ul>
                </div>
             </div>
-
-            {/* Instructores */}
-            {/* <div className="courses-widget">
-               <h4 className="widget-title">Instructores</h4>
-               <div className="courses-cat-list">
-                  <ul className="list-wrap">
-                     {instructoresVisibles.map((inst, i) => (
-                        <li key={i}>
-                           <div onClick={() => manejarInstructor(inst)} className="form-check">
-                              <input className="form-check-input" type="checkbox" checked={inst === instructorSeleccionado} readOnly id={`instructor_${i}`} />
-                              <label className="form-check-label" htmlFor={`instructor_${i}`}>{inst}</label>
-                           </div>
-                        </li>
-                     ))}
-                  </ul>
-                  <div className="show-more">
-                     <a className={`show-more-btn ${mostrarMásInstructores ? 'active' : ''}`} style={{ cursor: "pointer" }} onClick={() => setMostrarMásInstructores(!mostrarMásInstructores)}>
-                        {mostrarMásInstructores ? "Mostrar menos -" : "Mostrar más +"}
-                     </a>
-                  </div>
-               </div>
-            </div> */}
 
             {/* Valoraciones */}
             <div className="courses-widget">
                <h4 className="widget-title">Valoraciones</h4>
                <div className="courses-rating-list">
                   <ul className="list-wrap">
-                     {[5, 4, 3, 2, 1].map((rating, i) => (
+                     {[5, 4, 3, 2, 1].map((valor, i) => (
                         <li key={i}>
-                           <div onClick={() => manejarValoración(rating)} className="form-check">
-                              <input className="form-check-input" type="checkbox" checked={rating === valoraciónSeleccionada} readOnly id={`rating_${i}`} />
+                           <div onClick={() => manejarValoración(valor)} className="form-check">
+                              <input
+                                 className="form-check-input"
+                                 type="checkbox"
+                                 checked={rating === valor.toString()}
+                                 readOnly
+                                 id={`rating_${i}`}
+                              />
                               <label className="form-check-label" htmlFor={`rating_${i}`}>
                                  <div className="rating">
-                                    <Rating initialValue={rating} size={20} readonly />
+                                    <Rating initialValue={valor} size={20} readonly />
                                  </div>
                               </label>
                            </div>

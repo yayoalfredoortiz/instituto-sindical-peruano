@@ -12,7 +12,26 @@ import { useCourseCategoryStore } from '@/zustand/stores/course-category.store';
 import Loading from '@/components/common/Loading';
 import { useCourseLevelStore } from '@/zustand/stores/course-level.store';
 
-const CourseArea = () => {
+type Props = {
+   search?: string;
+   categoryId?: string;
+   levelId?: string;
+   isPaid?: string;
+   //   status?: string;
+   //   limit?: string;
+   //   offset?: string;
+};
+
+const CourseArea = ({
+   search,
+   categoryId,
+   levelId,
+   isPaid,
+   //   status,
+   //   limit,
+   //   offset,
+}: Props) => {
+
    const {
       data: storeCourses,
       page,
@@ -49,10 +68,15 @@ const CourseArea = () => {
       : fallbackCourses;
 
    useEffect(() => {
-      if (!loaded) getAll(page, perPage);
+      getAll(page, perPage, {
+         search,
+         categoryId,
+         levelId,
+         isPaid,
+      });
       if (!loadedCategories) getAllCategories(1, 20);
       if (!loadedLevels) getAllLevels(1, 20);
-   }, [page, perPage, loaded]);
+   }, [page, perPage, categoryId, levelId, isPaid, loaded]);
 
    const handlePageClick = (event: any) => {
       setPage(event.selected + 1);
@@ -71,7 +95,7 @@ const CourseArea = () => {
       <section className="all-courses-area section-py-120">
          <div className="container">
             <div className="row">
-               <CourseSidebar setCourses={() => { }} />
+               <CourseSidebar />
                <div className="col-xl-9 col-lg-8">
                   <CourseTop
                      startOffset={(page - 1) * perPage + 1}

@@ -9,7 +9,7 @@ type Props = {
 };
 
 export const metadata = {
-  title: "Blog SkillGro - Online Courses & Education React Next js Template",
+  title: "Blog",
 };
 
 const Page = ({ searchParams }: Props) => {

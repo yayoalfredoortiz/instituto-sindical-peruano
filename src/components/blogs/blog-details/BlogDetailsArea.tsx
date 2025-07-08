@@ -105,7 +105,7 @@ const BlogDetailsArea = ({ articleId }: BlogDetailsAreaProps) => {
                         </div>
                      </div>
                   </div>
-                  <BlogAuthor />
+                  <BlogAuthor user={item.author!} />
                   <div className="blog-post-comment">
                      <BlogPostComment />
                      <BlogForm />

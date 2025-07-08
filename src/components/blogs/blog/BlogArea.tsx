@@ -27,13 +27,14 @@ const BlogArea = ({ style_1, categoryId, search }: BlogAreaProps) => {
       page,
       perPage,
       setPage,
+      loaded,
    } = useArticleStore();
 
    const getAllCategories = useArticleCategoryStore((state) => state.getAll);
    const loadedCategories = useArticleCategoryStore((state) => state.loaded);
 
    useEffect(() => {
-      getAll(
+      if (!loaded) getAll(
          page,
          perPage,
          {

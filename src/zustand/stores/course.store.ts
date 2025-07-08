@@ -3,7 +3,7 @@ import { devtools } from 'zustand/middleware';
 import { toastError, toastSuccess } from '@/utils/toast';
 import { Course } from '../interfaces/course.interface';
 import { Router } from '@/types/router';
-import { CourseFilters, CourseService } from '../services/course.service';
+import { CourseFilters, CourseService } from '../services/course.service'; 
 
 interface CourseState {
   data: Course[];
@@ -56,7 +56,7 @@ const storeApi: StateCreator<CourseState> = (set, get) => ({
   async getAll(currentPage, pageSize, filters = {}) {
     const offset = (currentPage - 1) * pageSize;
 
-    if (get().loaded) return; // ✅ evita doble carga
+    //if (get().loaded) return; // ✅ evita doble carga
     set({ loading: true, error: false });
 
     try {

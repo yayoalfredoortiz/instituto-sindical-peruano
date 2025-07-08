@@ -11,7 +11,7 @@ RUN npm install --production
 
 # Copia todo el código fuente
 # COPY . .
-COPY next.config.js ./
+COPY next.config.mjs ./
 # Realiza el build de la aplicación
 # RUN npm run build
 
