@@ -103,8 +103,8 @@ const HomeMain = () => {
             <Courses />
             <LegalFormats />
             <ChooseMain />
-            <BrandOne />
-            <TestimonialMain />
+            {/* <BrandOne />
+            <TestimonialMain /> */}
             <AboutUsMain />
             <Faq />
             <Blog />

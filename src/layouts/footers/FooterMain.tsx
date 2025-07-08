@@ -13,7 +13,7 @@ const FooterMain = () => {
   return (
     <div className="container-fluid footer__area text-white pt-5 px-sm-3 px-md-5" style={{ marginTop: '90px' }}>
       <div className="row mt-5">
-        <div className="col-lg-4">
+        {/* <div className="col-lg-4">
           <div className="d-flex justify-content-lg-center p-4 rounded-2 mb-2" style={{ background: 'rgba(255, 255, 255, 0.05)' }}>
             <i className="fa fa-2x fa-map-marker-alt text-secondary"></i>
             <div className="ms-3">
@@ -21,8 +21,8 @@ const FooterMain = () => {
               <p className="m-0 text-gray">{data?.company_address || 'Dirección no disponible'}</p>
             </div>
           </div>
-        </div>
-        <div className="col-lg-4">
+        </div> */}
+        <div className="col-lg-6">
           <div className="d-flex justify-content-lg-center p-4 rounded-2 mb-2" style={{ background: 'rgba(255, 255, 255, 0.05)' }}>
             <i className="fa fa-2x fa-envelope-open text-secondary"></i>
             <div className="ms-3">
@@ -35,7 +35,7 @@ const FooterMain = () => {
             </div>
           </div>
         </div>
-        <div className="col-lg-4">
+        <div className="col-lg-6">
           <div className="d-flex justify-content-lg-center p-4 rounded-2 mb-2" style={{ background: 'rgba(255, 255, 255, 0.05)' }}>
             <i className="fa fa-2x fa-phone-alt text-secondary"></i>
             <div className="ms-3">

@@ -8,7 +8,7 @@ import icon_1 from '@/assets/img/icons/map_marker.svg';
 import icon_2 from '@/assets/img/icons/envelope.svg';
 import icon_3 from '@/assets/img/icons/phone.svg';
 import { useOrganisationSettingStore } from '@/zustand/stores/organisation-setting.store';
- 
+
 
 const HeaderTopMain = ({ style }: any) => {
   const data = useOrganisationSettingStore((state) => state.data);
@@ -26,10 +26,10 @@ const HeaderTopMain = ({ style }: any) => {
         <div className="row">
           <div className="col-lg-6">
             <ul className="tg-header__top-info list-wrap">
-              <li>
+              {/* <li>
                 <Image src={icon_1} alt="Icon" />
                 <span>{data?.company_address || 'Dirección no disponible'}</span>
-              </li>
+              </li> */}
               <li>
                 <Image src={icon_2} alt="Icon" />
                 <Link href={`mailto:${data?.company_email || 'info@empresa.com'}`}>
@@ -63,17 +63,24 @@ const HeaderTopMain = ({ style }: any) => {
                     </Link>
                   </li>
                 )}
-                {data?.instagram_url && (
+                {data?.youtube_url && (
                   <li>
-                    <Link href={data.instagram_url} target="_blank">
-                      <i className="fab fa-instagram"></i>
+                    <Link href={data.youtube_url} target="_blank">
+                      <i className="fab fa-youtube"></i>
                     </Link>
                   </li>
                 )}
-                {data?.linkedin_url && (
+                {data?.tiktok_url && (
                   <li>
-                    <Link href={data.linkedin_url} target="_blank">
-                      <i className="fab fa-linkedin-in"></i>
+                    <Link href={data.tiktok_url} target="_blank">
+                      <i className="fab fa-tiktok"></i>
+                    </Link>
+                  </li>
+                )}
+                {data?.spotify_url && (
+                  <li>
+                    <Link href={data.spotify_url} target="_blank">
+                      <i className="fab fa-spotify"></i>
                     </Link>
                   </li>
                 )}
