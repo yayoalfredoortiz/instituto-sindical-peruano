@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[8976,5147],{65147:function(s,e,t){t.r(e);var l=t(57437),n=t(11444);e.default=()=>{let s=(0,n.v9)(s=>s.wishlist.wishlist);return(0,l.jsx)(l.Fragment,{children:(0,l.jsx)("span",{className:"wishlist-count",children:s.length})})}}}]);

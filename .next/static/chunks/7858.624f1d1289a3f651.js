@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[7858,3109],{63109:function(e,n,t){t.r(n);var a=t(57437),c=t(11444);n.default=()=>{let e=(0,c.v9)(e=>e.cart.cart);return(0,a.jsx)(a.Fragment,{children:(0,a.jsx)("span",{className:"mini-cart-count",children:e.length})})}}}]);

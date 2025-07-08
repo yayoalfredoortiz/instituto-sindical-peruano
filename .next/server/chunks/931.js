@@ -1,0 +1,1 @@
+"use strict";exports.id=931,exports.ids=[931],exports.modules={931:(s,t,e)=>{e.r(t),e.d(t,{default:()=>r});var i=e(10326),l=e(25842);let r=()=>{let s=(0,l.v9)(s=>s.wishlist.wishlist);return i.jsx(i.Fragment,{children:i.jsx("span",{className:"wishlist-count",children:s.length})})}}};
