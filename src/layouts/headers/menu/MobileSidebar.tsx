@@ -17,8 +17,8 @@ const MobileSidebar = ({ isActive, setIsActive }: any) => {
                      <Image
                         src={logo}
                         alt="Logo"
-                        width={65}
-                        height={53}
+                        width={50}
+                        height={50}
                      />
 
                   </Link>

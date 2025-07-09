@@ -31,7 +31,7 @@ const HeaderMain = () => {
                         <div className="tgmenu__wrap">
                            <nav className="tgmenu__nav">
                               <div className="logo">
-                                 <div style={{ width: '100%', maxWidth: '800px', margin: '0 auto' }}>
+                                 <div style={{ width: '100%', maxWidth: '80px', margin: '0 auto' }}>
                                     <Link href="/"><Image
                                        src={'/assets/img/logo/logo.png'}
                                        alt="Logo"
