@@ -35,6 +35,8 @@ const Banner = () => {
 
    const data = useBannerStore((state) => state.data); 
 
+   console.log('data',data);
+
    const handleFocus = () => {
       swiperRef.current?.autoplay?.stop();
    };
@@ -93,7 +95,7 @@ const Banner = () => {
                                  <p>{item.description}</p>
 
                                  {/* Search */}
-                                 {item.has_search&& (
+                                 {/* {item.has_search&& (
                                     <div className="slider__search">
                                        <form
                                           onSubmit={(e) => e.preventDefault()}
@@ -110,7 +112,7 @@ const Banner = () => {
                                           </button>
                                        </form>
                                     </div>
-                                 )}
+                                 )} */}
 
                                  {/* Action Button */}
                                  {item.enable_action && item.url_action && (

@@ -343,3 +343,7 @@ textarea {
 .text-secondary {
 	color: var(--tg-theme-secondary) !important;
 }
+
+.input-primary-border {
+  border: 1px solid var(--tg-theme-primary) !important; 
+}

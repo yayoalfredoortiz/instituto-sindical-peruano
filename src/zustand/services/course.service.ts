@@ -1,6 +1,7 @@
 import { kmFitnessApi } from '@/api/km-fitness.api';
 import { AxiosError } from 'axios';
 import { Course } from '../interfaces/course.interface';
+import qs from 'qs';
 
 export interface CourseListResponse {
   count: number;
@@ -10,25 +11,32 @@ export interface CourseListResponse {
 }
 
 export interface CourseFilters {
-  status?: number; 
+  status?: number;
   search?: string;
-  categoryId?: string;
   levelId?: string;
   isPaid?: string;
+  categoryId?: string[];
 }
 
 export class CourseService {
-  static getAll = async (limit: number, offset: number, filters: CourseFilters = {}): Promise<CourseListResponse> => {
+
+  static getAll = async (
+    limit: number,
+    offset: number,
+    filters: CourseFilters = {}
+  ): Promise<CourseListResponse> => {
+
     try {
       const { data } = await kmFitnessApi.get<CourseListResponse>('/courses', {
         params: {
           limit,
           offset,
-          ...filters,
           status: 3,
+          ...filters,
         },
+        paramsSerializer: params => qs.stringify(params, { arrayFormat: 'comma' }), 
       });
-      console.log('filters','-',filters,'-',data);
+
       return data;
     } catch (error) {
       console.error(error);

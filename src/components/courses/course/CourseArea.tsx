@@ -7,31 +7,24 @@ import ReactPaginate from 'react-paginate';
 import CourseSidebar from './CourseSidebar';
 import CourseTop from './CourseTop';
 import { useCourseStore } from '@/zustand/stores/course.store';
-import course_data from '@/data/home-data/CourseDataTwo';
 import { useCourseCategoryStore } from '@/zustand/stores/course-category.store';
-import Loading from '@/components/common/Loading';
 import { useCourseLevelStore } from '@/zustand/stores/course-level.store';
+import course_data from '@/data/home-data/CourseDataTwo';
+import Loading from '@/components/common/Loading';
 
 type Props = {
    search?: string;
-   categoryId?: string;
+   categoryIds: string[];
    levelId?: string;
    isPaid?: string;
-   //   status?: string;
-   //   limit?: string;
-   //   offset?: string;
 };
 
 const CourseArea = ({
    search,
-   categoryId,
+   categoryIds,
    levelId,
    isPaid,
-   //   status,
-   //   limit,
-   //   offset,
 }: Props) => {
-
    const {
       data: storeCourses,
       page,
@@ -39,152 +32,152 @@ const CourseArea = ({
       count,
       getAll,
       setPage,
-      loaded
+      loaded,
    } = useCourseStore();
 
-   const getAllCategories = useCourseCategoryStore((state) => state.getAll);
-   const loadedCategories = useCourseCategoryStore((state) => state.loaded);
+   const getAllCategories = useCourseCategoryStore((s) => s.getAll);
+   const loadedCategories = useCourseCategoryStore((s) => s.loaded);
 
-   const getAllLevels = useCourseLevelStore((state) => state.getAll);
-   const loadedLevels = useCourseLevelStore((state) => state.loaded);
+   const getAllLevels = useCourseLevelStore((s) => s.getAll);
+   const loadedLevels = useCourseLevelStore((s) => s.loaded);
+
+   const [localSearch, setLocalSearch] = useState(search || '');
+   const [activeTab, setActiveTab] = useState(0);
 
    const fallbackCourses = course_data.filter((item) => item.page === 'home_7');
 
-   const combinedCourses = storeCourses.length > 0
-      ? storeCourses.map((course, idx) => {
-         const fallback = fallbackCourses[idx % fallbackCourses.length];
-         return {
-            id: course.id,
-            title: course.title,
-            slug: course.slug,
-            price: course.price,
-            thumb: fallback.thumb,
-            category: course.category?.name || fallback.tag,
-            reviews_count: course.reviews_count || 0,
-            teacher: course.teacher?.name || 'Instructor',
-            desc: course.description || fallback.desc,
-         };
-      })
-      : fallbackCourses;
+   const combinedCourses = storeCourses.map((course, idx) => {
+      const fallback = fallbackCourses[idx % fallbackCourses.length];
+      return {
+         id: course.id,
+         title: course.title,
+         slug: course.slug,
+         price: course.price,
+         thumb: fallback.thumb,
+         category: course.category?.name || fallback.tag,
+         reviews_count: course.reviews_count || 0,
+         teacher: course.teacher?.name || 'Instructor',
+         desc: course.description || fallback.desc,
+      };
+   });
+
+   const currentItems = combinedCourses.slice((page - 1) * perPage, page * perPage);
 
    useEffect(() => {
-      getAll(page, perPage, {
-         search,
-         categoryId,
+      getAll(page, perPage, { search, categoryId: categoryIds, levelId, isPaid });
+      if (!loadedCategories) getAllCategories(1, 20);
+      if (!loadedLevels) getAllLevels(1, 20);
+   }, [page, perPage, categoryIds, levelId, isPaid, search]);
+
+   const clearSearch = () => {
+      setLocalSearch('');
+      setPage(1);
+      getAll(1, perPage, {
+         search: '',
+         categoryId: categoryIds,
          levelId,
          isPaid,
       });
-      if (!loadedCategories) getAllCategories(1, 20);
-      if (!loadedLevels) getAllLevels(1, 20);
-   }, [page, perPage, categoryId, levelId, isPaid, loaded]);
+   };
+
+   const handleSearchSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      getAll(1, perPage, {
+         search: localSearch,
+         categoryId: categoryIds,
+         levelId,
+         isPaid,
+      });
+      setPage(1);
+   };
 
    const handlePageClick = (event: any) => {
       setPage(event.selected + 1);
    };
 
-   const [activeTab, setActiveTab] = useState(0);
-   const handleTabClick = (index: number) => setActiveTab(index);
-
    if (!loaded || !loadedCategories || !loadedLevels) {
       return <Loading />;
    }
 
-   const currentItems = combinedCourses.slice((page - 1) * perPage, page * perPage);
+   const renderCourses = () =>
+      currentItems.map((item) => (
+         <div key={item.id} className="col">
+            <div className={`courses__item ${activeTab === 1 ? 'courses__item-three' : ''} shine__animate-item`}>
+               <div className="courses__item-thumb">
+                  <Link href={`/course-details/${item.slug}`} className="shine__animate-link">
+                     <Image src={item.thumb} alt="imagen del curso" width={400} height={250} />
+                  </Link>
+               </div>
+               <div className="courses__item-content">
+                  <ul className="courses__item-meta list-wrap">
+                     <li className="courses__item-tag"><Link href="/course">{item.category}</Link></li>
+                     {activeTab === 0 && (
+                        <li className="avg-rating"><i className="fas fa-star"></i> ({item.reviews_count} Reseñas)</li>
+                     )}
+                     <li className="price">{item.price > 0 ? `$${item.price}.00` : 'Gratis'}</li>
+                  </ul>
+                  <h5 className="title"><Link href={`/course-details/${item.slug}`}>{item.title}</Link></h5>
+                  <p className="author">Por <Link href="#">{item.teacher}</Link></p>
+                  {activeTab === 1 && <p className="info">{item.desc}</p>}
+                  <div className="courses__item-bottom">
+                     <div className="button">
+                        <Link href={`/course-details/${item.slug}`}>
+                           <span className="text">Inscribirse</span>
+                           <i className="flaticon-arrow-right"></i>
+                        </Link>
+                     </div>
+                     {activeTab === 0 && (
+                        <h5 className="price">{item.price > 0 ? `$${item.price}.00` : 'Gratis'}</h5>
+                     )}
+                  </div>
+               </div>
+            </div>
+         </div>
+      ));
 
    return (
       <section className="all-courses-area section-py-120">
          <div className="container">
             <div className="row">
-               <CourseSidebar />
+               <CourseSidebar onClearFilters={clearSearch} />
                <div className="col-xl-9 col-lg-8">
+                  <div className="mb-4">
+                     <form onSubmit={handleSearchSubmit} className="slider__search-form d-flex">
+                        <input
+                           type="text"
+                           placeholder="Buscar cursos..."
+                           value={localSearch}
+                           onChange={(e) => setLocalSearch(e.target.value)}
+                           className="form-control me-2 input-primary-border"
+                        />
+                        <button type="submit" className="btn btn-primary">Buscar</button>
+                     </form>
+                  </div>
+
                   <CourseTop
                      startOffset={(page - 1) * perPage + 1}
                      endOffset={Math.min(page * perPage, combinedCourses.length)}
                      totalItems={combinedCourses.length}
                      setCourses={() => { }}
-                     handleTabClick={handleTabClick}
+                     handleTabClick={setActiveTab}
                      activeTab={activeTab}
                   />
-                  <div className="tab-content" id="myTabContent">
-                     <div className={`tab-pane fade ${activeTab === 0 ? 'show active' : ''}`} id="grid" role="tabpanel">
-                        <div className="row courses__grid-wrap row-cols-1 row-cols-xl-3 row-cols-lg-2 row-cols-md-2 row-cols-sm-1">
-                           {currentItems.map((item) => (
-                              <div key={item.id} className="col">
-                                 <div className="courses__item shine__animate-item">
-                                    <div className="courses__item-thumb">
-                                       <Link href={`/course-details/${item.slug}`} className="shine__animate-link">
-                                          <Image src={item.thumb} alt="imagen del curso" width={400} height={250} />
-                                       </Link>
-                                    </div>
-                                    <div className="courses__item-content">
-                                       <ul className="courses__item-meta list-wrap">
-                                          <li className="courses__item-tag">
-                                             <Link href="/course">{item.category}</Link>
-                                          </li>
-                                          <li className="avg-rating"><i className="fas fa-star"></i> ({item.reviews_count} Reseñas)</li>
-                                       </ul>
-                                       <h5 className="title">
-                                          <Link href={`/course-details/${item.slug}`}>{item.title}</Link>
-                                       </h5>
-                                       <p className="author">Por <Link href="#">{item.teacher}</Link></p>
-                                       <div className="courses__item-bottom">
-                                          <div className="button">
-                                             <Link href={`/course-details/${item.slug}`}>
-                                                <span className="text">Inscribirse</span>
-                                                <i className="flaticon-arrow-right"></i>
-                                             </Link>
-                                          </div>
-                                          <h5 className="price">{item.price > 0 ? `$${item.price}.00` : 'Gratis'}</h5>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
-                           ))}
-                        </div>
-                        <nav className="pagination__wrap mt-30">
-                           <ReactPaginate
-                              breakLabel="..."
-                              onPageChange={handlePageClick}
-                              pageRangeDisplayed={3}
-                              pageCount={Math.ceil(combinedCourses.length / perPage)}
-                              forcePage={page - 1}
-                              className="list-wrap"
-                           />
-                        </nav>
-                     </div>
 
-                     <div className={`tab-pane fade ${activeTab === 1 ? 'show active' : ''}`} id="list" role="tabpanel">
-                        <div className="row courses__list-wrap row-cols-1">
-                           {currentItems.map((item) => (
-                              <div key={item.id} className="col">
-                                 <div className="courses__item courses__item-three shine__animate-item">
-                                    <div className="courses__item-thumb">
-                                       <Link href={`/course-details/${item.slug}`} className="shine__animate-link">
-                                          <Image src={item.thumb} alt="imagen del curso" width={400} height={250} />
-                                       </Link>
-                                    </div>
-                                    <div className="courses__item-content">
-                                       <ul className="courses__item-meta list-wrap">
-                                          <li className="courses__item-tag">
-                                             <Link href="/course">{item.category}</Link>
-                                          </li>
-                                          <li className="price">{item.price > 0 ? `$${item.price}.00` : 'Gratis'}</li>
-                                       </ul>
-                                       <h5 className="title"><Link href={`/course-details/${item.slug}`}>{item.title}</Link></h5>
-                                       <p className="author">Por <Link href="#">{item.teacher}</Link></p>
-                                       <p className="info">{item.desc}</p>
-                                       <div className="courses__item-bottom">
-                                          <div className="button">
-                                             <Link href={`/course-details/${item.slug}`}>
-                                                <span className="text">Inscribirse</span>
-                                                <i className="flaticon-arrow-right"></i>
-                                             </Link>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </div>
-                              </div>
-                           ))}
+                  {combinedCourses.length === 0 ? (
+                     <div className="text-center py-5">
+                        <h3>No se encontraron cursos disponibles</h3>
+                     </div>
+                  ) : (
+                     <div className="tab-content" id="myTabContent">
+                        <div className={`tab-pane fade ${activeTab === 0 ? 'show active' : ''}`} id="grid" role="tabpanel">
+                           <div className="row courses__grid-wrap row-cols-1 row-cols-xl-3 row-cols-lg-2 row-cols-md-2 row-cols-sm-1">
+                              {renderCourses()}
+                           </div>
+                        </div>
+                        <div className={`tab-pane fade ${activeTab === 1 ? 'show active' : ''}`} id="list" role="tabpanel">
+                           <div className="row courses__list-wrap row-cols-1">
+                              {renderCourses()}
+                           </div>
                         </div>
                         <nav className="pagination__wrap mt-30">
                            <ReactPaginate
@@ -197,7 +190,7 @@ const CourseArea = ({
                            />
                         </nav>
                      </div>
-                  </div>
+                  )}
                </div>
             </div>
          </div>
@@ -206,7 +199,6 @@ const CourseArea = ({
 };
 
 export default CourseArea;
-
 
 // 'use client';
 // import Image from 'next/image';

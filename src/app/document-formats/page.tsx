@@ -2,7 +2,7 @@
 import Wrapper from "@/layouts/Wrapper";
 
 export const metadata = {
-   title: "Contact SkillGro - Online Courses & Education React Next js Template",
+   title: "Document Format",
 };
 const page = () => {
    return (

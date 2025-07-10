@@ -6,15 +6,19 @@ import { useCourseLevelStore } from '@/zustand/stores/course-level.store';
 import { useState } from 'react';
 import { Rating } from 'react-simple-star-rating';
 
-const CourseSidebar = () => {
+type Props = {
+  onClearFilters?: () => void;
+};
+
+const CourseSidebar = ({ onClearFilters }: Props) => {
    const router = useRouter();
    const pathname = usePathname();
    const searchParams = useSearchParams();
 
    const [mostrarMásCategorías, setMostrarMásCategorías] = useState(false);
-   const [mostrarMásInstructores, setMostrarMásInstructores] = useState(false);
 
-   const categoryId = searchParams.get('categoryId') ?? '';
+   const categoryIdRaw = searchParams.get('categoryId') ?? '';
+   const selectedCategoryIds = categoryIdRaw.split(',').filter(Boolean); // ['1', '2']
    const levelId = searchParams.get('levelId') ?? '';
    const isPaid = searchParams.get('isPaid') ?? '';
    const rating = searchParams.get('rating') ?? '';
@@ -30,8 +34,11 @@ const CourseSidebar = () => {
    };
 
    const manejarCategoría = (id: string) => {
-      const selected = categoryId === id ? null : id;
-      setParam('categoryId', selected);
+      const current = selectedCategoryIds;
+      const exists = current.includes(id);
+      const updated = exists ? current.filter(c => c !== id) : [...current, id];
+      const value = updated.length > 0 ? updated.join(',') : null;
+      setParam('categoryId', value);
    };
 
    const manejarNivel = (id: string) => {
@@ -54,6 +61,7 @@ const CourseSidebar = () => {
 
    const resetFiltros = () => {
       router.push(pathname);
+      onClearFilters?.();
    };
 
    const categories = useCourseCategoryStore((state) => state.data);
@@ -66,8 +74,6 @@ const CourseSidebar = () => {
    return (
       <div className="col-xl-3 col-lg-4">
          <aside className="courses__sidebar">
-
-            {/* Botón limpiar filtros */}
             <div className="mb-4 text-end">
                <button onClick={resetFiltros} className="btn btn-sm btn-outline-dark">Limpiar filtros</button>
             </div>
@@ -83,7 +89,7 @@ const CourseSidebar = () => {
                               <input
                                  className="form-check-input"
                                  type="checkbox"
-                                 checked={categoryId === String(cat.id)}
+                                 checked={selectedCategoryIds.includes(String(cat.id))}
                                  readOnly
                                  id={`cat_${i}`}
                               />
@@ -156,7 +162,7 @@ const CourseSidebar = () => {
             </div>
 
             {/* Valoraciones */}
-            <div className="courses-widget">
+            {/* <div className="courses-widget">
                <h4 className="widget-title">Valoraciones</h4>
                <div className="courses-rating-list">
                   <ul className="list-wrap">
@@ -180,7 +186,7 @@ const CourseSidebar = () => {
                      ))}
                   </ul>
                </div>
-            </div>
+            </div> */}
          </aside>
       </div>
    );

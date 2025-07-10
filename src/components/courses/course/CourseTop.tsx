@@ -76,7 +76,7 @@ const CourseTop = ({ startOffset, endOffset, totalItems, setCourses, handleTabCl
             </div>
             <div className="col-md-7">
                <div className="d-flex justify-content-center justify-content-md-end align-items-center flex-wrap">
-                  <div className="courses-top-right m-0 ms-md-auto">
+                  {/* <div className="courses-top-right m-0 ms-md-auto">
                      <span className="sort-by">Ordenar por:</span>
                      <div className="courses-top-right-select">
                         <select onChange={selectHandler} value={selected} name="orderby" className="orderby">
@@ -86,7 +86,7 @@ const CourseTop = ({ startOffset, endOffset, totalItems, setCourses, handleTabCl
                            <option value="rating">Mejor valoración</option>
                         </select>
                      </div>
-                  </div>
+                  </div> */}
                   <ul className="nav nav-tabs courses__nav-tabs" id="myTab" role="tablist">
                      {tab_title.map((tab, index) => (
                         <li key={index} onClick={() => handleTabClick(index)} className="nav-item" role="presentation">

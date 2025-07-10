@@ -1,5 +1,6 @@
 import Course from "@/components/courses/course";
 import Wrapper from "@/layouts/Wrapper";
+import { useMemo } from "react";
 
 type Props = {
    searchParams?: {
@@ -18,16 +19,21 @@ export const metadata = {
 };
 
 const page = ({ searchParams }: Props) => {
+
+    const categoryIds = searchParams?.categoryId
+      ? searchParams.categoryId.split(',')
+      : [];
+
    return (
       <Wrapper>
          <Course
             search={searchParams?.search}
-            categoryId={searchParams?.categoryId}
+            categoryIds={categoryIds}
             levelId={searchParams?.levelId}
             isPaid={searchParams?.isPaid}
-            // status={searchParams?.status}
-            // limit={searchParams?.limit}
-            // offset={searchParams?.offset}
+         // status={searchParams?.status}
+         // limit={searchParams?.limit}
+         // offset={searchParams?.offset}
          />
       </Wrapper>
    );

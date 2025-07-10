@@ -7,22 +7,22 @@ import HeaderMain from "@/layouts/headers/HeaderMain";
 
 type CourseProps = {
   search?: string;
-  categoryId?: string;
+  categoryIds?: string[];
   levelId?: string;
   isPaid?: string;
-//   status?: string;
-//   limit?: string;
-//   offset?: string;
+  //   status?: string;
+  //   limit?: string;
+  //   offset?: string;
 };
 
 const Course = ({
   search,
-  categoryId,
+  categoryIds,
   levelId,
   isPaid,
-//   status,
-//   limit,
-//   offset,
+  //   status,
+  //   limit,
+  //   offset,
 }: CourseProps) => {
   return (
     <>
@@ -31,12 +31,12 @@ const Course = ({
         <BreadcrumbOne title="Todos los Cursos" sub_title="Cursos" />
         <CourseArea
           search={search}
-          categoryId={categoryId}
+          categoryIds={categoryIds ?? []}
           levelId={levelId}
           isPaid={isPaid}
-         //  status={status}
-         //  limit={limit}
-         //  offset={offset}
+        //  status={status}
+        //  limit={limit}
+        //  offset={offset}
         />
       </main>
       <WhatsappButton />

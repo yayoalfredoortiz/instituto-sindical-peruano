@@ -33,14 +33,14 @@ const HeaderMain = () => {
                               <div className="logo">
                                  <div style={{ width: '100%', maxWidth: '80px', margin: '0 auto' }}>
                                     <Link href="/"><Image
-                                       src={'/assets/img/logo/logo.png'}
+                                       src={'/assets/img/logo/logo3.png'}
                                        alt="Logo"
                                        width={0}
                                        height={0}
                                        sizes="100vw"
+                                       unoptimized
                                        style={{ width: '100%', height: 'auto' }}
-                                    /></Link>
-
+                                    /></Link> 
                                  </div>
                               </div>
                               <div className="tgmenu__navbar-wrap tgmenu__main-menu d-none d-xl-flex">
