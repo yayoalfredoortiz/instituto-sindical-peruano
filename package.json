@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "cross-env NODE_ENV=production next build",
+    "build": "rename .env.local .env.local.bak && copy .env.production .env && next build && del .env && rename .env.local.bak .env.local",
     "start": "next start",
     "lint": "next lint"
   },
